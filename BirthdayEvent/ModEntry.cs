@@ -6,7 +6,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 
-namespace BirthdayEvent
+namespace OrbitalEventCreator
 {
     public class ModEntry : Mod
     {
@@ -24,7 +24,7 @@ namespace BirthdayEvent
         // The actual shop
         StardewValley.Menus.ShopMenu shop;
 
-        // Wether the birthday has already been started
+        // Whether the birthday has already been started
         Boolean alreadyStarted = false;
 
         // If the B button has been pressed
@@ -87,12 +87,15 @@ namespace BirthdayEvent
                 Vector2 pos = cursorPos.GrabTile;
 
                 // Check for shop
-                // This is called when right clicking on Robin
+                // This is called when right clicking on Robin-Wizard
                 if (pos == npcPosition && e.Button == SButton.MouseRight)
                 {
                     if (allRosesFound)
                     {
-                        this.Monitor.Log("Click on Robin", LogLevel.Info);
+                        // Unhook music track change
+                        helper.Events.Player.Warped -= OnPlayerWarped;
+
+                        this.Monitor.Log("Click on Wizard", LogLevel.Info);
 
                         // Activate shop
                         shop = new StardewValley.Menus.ShopMenu(items, 0, null);
@@ -104,7 +107,7 @@ namespace BirthdayEvent
                     else
                     {
                         // Send a message
-                        string message = "You have to find all the roses before you can talk to Robin!";
+                        string message = "You have to find all 7 flowers before you can talk to the Wizard!";
                         Game1.activeClickableMenu = new StardewValley.Menus.DialogueBox(message);
                     }
                 }
@@ -118,7 +121,7 @@ namespace BirthdayEvent
                         if (pos == rosesPositions[i])
                         {
                             rosesFound[i] = true;
-                            this.Monitor.Log("Rose picked", LogLevel.Info);
+                            this.Monitor.Log("Summer spangle picked", LogLevel.Info);
 
                             // Spawn some butterflies
                             Random rnd = new Random();
@@ -138,7 +141,7 @@ namespace BirthdayEvent
                     // Send a message
                     if (allRosesFound)
                     {
-                        string message = "You have found all the roses! ^Go talk to Robin!";
+                        string message = "You have found all the flowers! ^Go talk to the Wizard!";
                         Game1.activeClickableMenu = new StardewValley.Menus.DialogueBox(message);
                     }
                 }
@@ -239,20 +242,33 @@ namespace BirthdayEvent
         private void CreateShop()
         {
             StardewValley.Object itm;
+            StardewValley.Tools.MeleeWeapon wpn;
             int[] q = new int[2];
             q[0] = 1; //Price 
             q[1] = 1; //Quantity
 
             // Add all the tree saplings
-            for (int i = 0; i < 6; i++)
+            /*for (int i = 0; i < 6; i++)
             {
                 itm = new StardewValley.Object(628 + i, 1, false, 0, 4);
                 items.Add(itm, q);
-            }
+            }*/
 
             // Add hay
             itm = new StardewValley.Object(178, 1, false, 0, 4);
-            items.Add(itm, new int[2] { 1, 1998 });
+            items.Add(itm, new int[2] { 0, 10 });
+
+            // Add tempered galaxy sword
+            wpn = new StardewValley.Tools.MeleeWeapon(4);
+            items.Add(wpn, new int[2] { 1, 1 });
+
+            // Add magic rock candy
+            itm = new StardewValley.Object(279, 3);
+            items.Add(itm, new int[2] { 1, 1 });
+
+            // Add explosive ammo
+            itm = new StardewValley.Object(441, 200);
+            items.Add(itm, new int[2] { 1, 1 });
         }
 
         private void StartBirthdayEvent()
@@ -262,32 +278,32 @@ namespace BirthdayEvent
 
             StardewValley.NPC protoNPC = null;
 
-            //Spawn a custom merchant with Robin's sprite
+            //Spawn a custom merchant with Robin-Wizard's sprite
             foreach (StardewValley.GameLocation loc in StardewValley.Game1.locations)
             {
                 foreach (StardewValley.NPC npc in loc.characters)
                 {
-                    if (npc.getName() == "Robin")
+                    if (npc.getName() == "Wizard")
                     {
                         protoNPC = npc;
                     }
                 }
             }
 
-            newNpc = new StardewValley.NPC(protoNPC.Sprite, npcPosition, "Town", 2, "Robin", new Dictionary<int, int[]>(), protoNPC.Portrait, false);
+            newNpc = new StardewValley.NPC(protoNPC.Sprite, npcPosition, "Town", 2, "Wizard", new Dictionary<int, int[]>(), protoNPC.Portrait, false);
             newNpc.setTileLocation(npcPosition);
             newNpc.Speed = protoNPC.Speed;
 
-            // Spawn Robin in town
+            // Spawn Robin-Wizard in town
             Game1.getLocationFromName("Town").addCharacter(newNpc);
 
-            // Try to stop Robin
+            // Try to stop Robin-Wizard
             newNpc.Halt();
             newNpc.stopWithoutChangingFrame();
             newNpc.movementPause = 1000000000;
 
             //Opens a dialogue as soon as the village is entered
-            newNpc.setNewDialogue("Hello!, someone special has prepared a minigame for you! Find the 7 fairy roses hidden in town and come talk to me in the middle of the plaza!");
+            newNpc.setNewDialogue("Hello!, someone special has prepared a minigame for you! Find the 7 summer spangles hidden in town and come talk to me in the middle of the plaza!");
 
             // Show dialogue
             Game1.drawDialogue(newNpc);
@@ -307,7 +323,7 @@ namespace BirthdayEvent
             rosesPositions[0] = new Vector2(15, 52);
             rosesPositions[1] = new Vector2(16, 52);
             rosesPositions[2] = new Vector2(15, 72);
-            rosesPositions[3] = new Vector2(60, 55);
+            rosesPositions[3] = new Vector2(16, 87);
             rosesPositions[4] = new Vector2(44, 86);
             rosesPositions[5] = new Vector2(61, 97);
             rosesPositions[6] = new Vector2(62, 97);
@@ -318,7 +334,7 @@ namespace BirthdayEvent
                 rosesFound[i] = false;
 
                 // Spawn the roses
-                Game1.getLocationFromName("Town").dropObject(new StardewValley.Object(595, 1, false, -1, 4), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
+                Game1.getLocationFromName("Town").dropObject(new StardewValley.Object(593, 1, false, -1, 0), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
             }
         }
 
@@ -329,7 +345,7 @@ namespace BirthdayEvent
                 Game1.changeMusicTrack("WizardSong");
 
                 // Unhook itself
-                helper.Events.Player.Warped -= OnPlayerWarped;
+                // helper.Events.Player.Warped -= OnPlayerWarped;
             }
         }
     }

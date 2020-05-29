@@ -3,3 +3,9 @@
 /home/gef/Projects/BirthdayEvent/BirthdayEvent/bin/Debug/BirthdayEvent.pdb
 /home/gef/Projects/BirthdayEvent/BirthdayEvent/obj/Debug/BirthdayEvent.dll
 /home/gef/Projects/BirthdayEvent/BirthdayEvent/obj/Debug/BirthdayEvent.pdb
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\bin\Debug\BirthdayEvent.dll
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\bin\Debug\BirthdayEvent.pdb
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\BirthdayEvent.csprojAssemblyReference.cache
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\BirthdayEvent.csproj.CoreCompileInputs.cache
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\BirthdayEvent.dll
+C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\BirthdayEvent.pdb

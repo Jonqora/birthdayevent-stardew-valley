@@ -1,7 +1,7 @@
 ﻿using System;
 using StardewModdingAPI;
 
-namespace BirthdayEvent
+namespace OrbitalEventCreator
 {
     public class BirthdayLetter : IAssetEditor
     {
