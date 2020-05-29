@@ -334,7 +334,7 @@ namespace OrbitalEventCreator
                 rosesFound[i] = false;
 
                 // Spawn the roses
-                Game1.getLocationFromName("Town").dropObject(new StardewValley.Object(593, 1, false, -1, 0), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
+                Game1.getLocationFromName("Town").dropObject(new StardewValley.Objects.ColoredObject(593, 1, new Color(99, 255, 210)), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
             }
         }
 
