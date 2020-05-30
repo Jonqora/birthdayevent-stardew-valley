@@ -209,7 +209,7 @@ namespace OrbitalEventCreator
         // Check if all the roses have been found
         private bool CheckAllRosesPicked()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 26; i++)
             {
                 if (rosesFound[i] == false)
                 {
