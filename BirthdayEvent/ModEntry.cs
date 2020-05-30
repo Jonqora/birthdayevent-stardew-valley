@@ -38,28 +38,25 @@ namespace OrbitalEventCreator
         bool[] rosesFound = new bool[26];
         bool allRosesFound = false;
 
+        // Message class for multiplayer functionality
+        private class MyMessage
+        {
+
+        }
+
         //Entry point of the mod
         public override void Entry(IModHelper helper)
         {
             this.helper = helper;
             this.helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            this.helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
         }
 
-        //Used to start the birthday
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        //Listen for the message from host player
+        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
-
-            // Ignore if player hasn't loaded a save yet
-            if (!Context.IsWorldReady)
-                return;
-
-            // If the B button is pressed
-            if (!bPressed && e.Button == SButton.B)
-            {
-                this.Monitor.Log("Tomorrow birthday :D", LogLevel.Info);
-
-                bPressed = true;
-
+           if (e.FromModID == this.ModManifest.UniqueID && e.Type == "StartBirthdayEvent")
+           {
                 // In case they already have the birthday email, remove it
                 if (Game1.player.mailReceived.Contains("WizardBirthdayMail"))
                 {
@@ -77,10 +74,55 @@ namespace OrbitalEventCreator
 
                 //Set the weather for tomorrow to sunny :D
                 Game1.weatherForTomorrow = 4;
+
+                this.Monitor.Log("Received orbital event message.", LogLevel.Debug);
+           }
+        }
+
+        //Used to start the birthday
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+
+            // Ignore if player hasn't loaded a save yet
+            if (!Context.IsWorldReady)
+                return;
+
+            // If the B button is pressed (by the host)
+            if (!bPressed && e.Button == SButton.B && Game1.player.IsMainPlayer)
+            {
+                this.Monitor.Log("Scheduled a celebration for tomorrow!", LogLevel.Info);
+                Game1.addHUDMessage(new HUDMessage("Mail delivered!", 1));
+
+                bPressed = true;
+
+                // Send a message to the farmhand
+                MyMessage message = new MyMessage();
+                this.Helper.Multiplayer.SendMessage(message, "StartBirthdayEvent", modIDs: new[] { this.ModManifest.UniqueID });
+
+                /*
+                // In case they already have the birthday email, remove it
+                if (Game1.player.mailReceived.Contains("WizardBirthdayMail"))
+                {
+                    Game1.player.mailReceived.Remove("WizardBirthdayMail");
+                }
+
+                //Create the letter
+                Helper.Content.AssetEditors.Add(new BirthdayLetter());
+
+                //Send the letter for tomorrow
+                Game1.addMailForTomorrow("WizardBirthdayMail");
+                */
+
+                //This will start the birthday in the next morning
+                this.helper.Events.GameLoop.DayStarted += this.OnDayStarted;
+
+                //Set the weather for tomorrow to sunny :D
+                Game1.weatherForTomorrow = 4;
             }
 
+
             // On mouse click
-            if (alreadyStarted && Game1.player.currentLocation.Name.Equals("Town") && (e.Button.IsActionButton() || e.Button.IsUseToolButton()) && Game1.overlayMenu == null)
+            if (alreadyStarted && Game1.player.currentLocation.Name.Equals("Town") && (e.Button.IsActionButton() || e.Button.IsUseToolButton()) && Game1.overlayMenu == null && !Game1.player.IsMainPlayer)
             {
 
                 ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
@@ -304,8 +346,11 @@ namespace OrbitalEventCreator
             //Opens a dialogue as soon as the village is entered
             newNpc.setNewDialogue("We are ready to begin, @! I have hidden 26 summer spangles around town. Find them all, then come talk to me in the middle of the plaza for a reward.");
 
-            // Show dialogue
-            Game1.drawDialogue(newNpc);
+            if (!Game1.player.IsMainPlayer)
+            {
+                // Show dialogue
+                Game1.drawDialogue(newNpc);
+            }
 
             // Change music, if we are currently on town change directly, else set
             // up a hook to change the music when the player enters town
@@ -389,9 +434,12 @@ namespace OrbitalEventCreator
             if (e.NewLocation.Name.Equals("Town"))
             {
                 Game1.changeMusicTrack("WizardSong");
-
-                // Unhook itself
-                // helper.Events.Player.Warped -= OnPlayerWarped;
+                
+                if (Game1.player.IsMainPlayer)
+                {
+                    // Unhook itself
+                    helper.Events.Player.Warped -= OnPlayerWarped;
+                }
             }
         }
     }
