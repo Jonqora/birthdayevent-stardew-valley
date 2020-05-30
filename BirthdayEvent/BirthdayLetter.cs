@@ -17,7 +17,7 @@ namespace OrbitalEventCreator
         public void Edit<T>(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
-            data["Birthday"] = "Hello @... ^I wanted to do something special for your birthday, so here it is I figured out how to send a mail :). ^I hope this makes you smile.";
+            data["WizardBirthdayMail"] = "= Esteemed @... = ^ ^The elementals have informed me that today marks the completion of your 26th revolution around the sun. Congratulations! ^ ^You have accomplished much in your twenty-six years, and I am sure you will accomplish much more.  ^ ^To celebrate the occasion, I have arranged an activity for you later today. Please meet me in the town square at 9:00 AM this morning to begin. ^ ^⁠— M. Rasmodius ^— (With some help from the \"ellen\"-mentals. <)";
         }
     }
 }

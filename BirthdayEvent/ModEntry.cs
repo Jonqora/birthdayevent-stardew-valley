@@ -34,8 +34,8 @@ namespace OrbitalEventCreator
         int every30Minutes = 0;
 
         // The positions of the fairy roses
-        Vector2[] rosesPositions = new Vector2[7];
-        bool[] rosesFound = new bool[7];
+        Vector2[] rosesPositions = new Vector2[26];
+        bool[] rosesFound = new bool[26];
         bool allRosesFound = false;
 
         //Entry point of the mod
@@ -61,16 +61,16 @@ namespace OrbitalEventCreator
                 bPressed = true;
 
                 // In case they already have the birthday email, remove it
-                if (Game1.player.mailReceived.Contains("Birthday"))
+                if (Game1.player.mailReceived.Contains("WizardBirthdayMail"))
                 {
-                    Game1.player.mailReceived.Remove("Birthday");
+                    Game1.player.mailReceived.Remove("WizardBirthdayMail");
                 }
 
                 //Create the letter
                 Helper.Content.AssetEditors.Add(new BirthdayLetter());
 
                 //Send the letter for tomorrow
-                Game1.addMailForTomorrow("Birthday");
+                Game1.addMailForTomorrow("WizardBirthdayMail");
 
                 //This will start the birthday in the next morning
                 this.helper.Events.GameLoop.DayStarted += this.OnDayStarted;
@@ -80,7 +80,7 @@ namespace OrbitalEventCreator
             }
 
             // On mouse click
-            if (alreadyStarted && Game1.player.currentLocation.Name.Equals("Town") && (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight))
+            if (alreadyStarted && Game1.player.currentLocation.Name.Equals("Town") && (e.Button.IsActionButton() || e.Button.IsUseToolButton()) && Game1.overlayMenu == null)
             {
 
                 ICursorPosition cursorPos = this.Helper.Input.GetCursorPosition();
@@ -88,7 +88,7 @@ namespace OrbitalEventCreator
 
                 // Check for shop
                 // This is called when right clicking on Robin-Wizard
-                if (pos == npcPosition && e.Button == SButton.MouseRight)
+                if (pos == npcPosition && e.Button.IsActionButton())
                 {
                     if (allRosesFound)
                     {
@@ -107,7 +107,7 @@ namespace OrbitalEventCreator
                     else
                     {
                         // Send a message
-                        string message = "You have to find all 7 flowers before you can talk to the Wizard!";
+                        string message = "You have to find all 26 flowers before you can talk to the Wizard!";
                         Game1.activeClickableMenu = new StardewValley.Menus.DialogueBox(message);
                     }
                 }
@@ -116,17 +116,17 @@ namespace OrbitalEventCreator
                 if (!allRosesFound)
                 {
                     // Check if a rose has been found
-                    for (int i = 0; i < 7; i++)
+                    for (int i = 0; i < 26; i++)
                     {
                         if (pos == rosesPositions[i])
                         {
                             rosesFound[i] = true;
-                            this.Monitor.Log("Summer spangle picked", LogLevel.Info);
+                            this.Monitor.Log($"Summer spangle {i} picked", LogLevel.Info);
 
                             // Spawn some butterflies
                             Random rnd = new Random();
 
-                            for (int j = 0; j < 10; j++)
+                            for (int j = 0; j < 7; j++)
                             {
                                 Butterfly b = new Butterfly(new Vector2((int)pos.X, (int)pos.Y));
 
@@ -167,7 +167,7 @@ namespace OrbitalEventCreator
         // Check if all the roses have been found
         private bool CheckAllRosesPicked()
         {
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (rosesFound[i] == false)
                 {
@@ -235,7 +235,7 @@ namespace OrbitalEventCreator
             GameLocation location = Game1.currentLocation;
             int playerX = (int)Math.Floor(Game1.player.Position.X / Game1.tileSize);
             int playerY = (int)Math.Floor(Game1.player.Position.Y / Game1.tileSize);
-            this.Monitor.Log($"Player at ({playerX}, {playerY}) name {location.Name}", LogLevel.Info);
+            //this.Monitor.Log($"Player at ({playerX}, {playerY}) name {location.Name}", LogLevel.Info);
         }
 
         // Adds the items to the shop
@@ -243,32 +243,31 @@ namespace OrbitalEventCreator
         {
             StardewValley.Object itm;
             StardewValley.Tools.MeleeWeapon wpn;
+            StardewValley.Objects.Hat hat;
             int[] q = new int[2];
             q[0] = 1; //Price 
             q[1] = 1; //Quantity
 
-            // Add all the tree saplings
-            /*for (int i = 0; i < 6; i++)
-            {
-                itm = new StardewValley.Object(628 + i, 1, false, 0, 4);
-                items.Add(itm, q);
-            }*/
-
-            // Add hay
-            itm = new StardewValley.Object(178, 1, false, 0, 4);
-            items.Add(itm, new int[2] { 0, 10 });
+            // Add party hat
+            hat = new StardewValley.Objects.Hat(58);
+            items.Add(hat, new int[2] { 0, 1 });
+            
+            // Add chocolate cake
+            itm = new StardewValley.Object(220, 1, quality:4);
+            items.Add(itm, new int[2] { 0, 1 });
+            
+            // Add 3 magic rock candy
+            itm = new StardewValley.Object(279, 3);
+            items.Add(itm, new int[2] { 0, 3 });
+            
+            // Add 200 explosive ammo
+            itm = new StardewValley.Object(441, 200);
+            items.Add(itm, new int[2] { 0, 200 });
 
             // Add tempered galaxy sword
-            wpn = new StardewValley.Tools.MeleeWeapon(4);
-            items.Add(wpn, new int[2] { 1, 1 });
+            wpn = new StardewValley.Tools.MeleeWeapon(66);
+            items.Add(wpn, new int[2] { 0, 1 });
 
-            // Add magic rock candy
-            itm = new StardewValley.Object(279, 3);
-            items.Add(itm, new int[2] { 1, 1 });
-
-            // Add explosive ammo
-            itm = new StardewValley.Object(441, 200);
-            items.Add(itm, new int[2] { 1, 1 });
         }
 
         private void StartBirthdayEvent()
@@ -303,7 +302,7 @@ namespace OrbitalEventCreator
             newNpc.movementPause = 1000000000;
 
             //Opens a dialogue as soon as the village is entered
-            newNpc.setNewDialogue("Hello!, someone special has prepared a minigame for you! Find the 7 summer spangles hidden in town and come talk to me in the middle of the plaza!");
+            newNpc.setNewDialogue("We are ready to begin, @! I have hidden 26 summer spangles around town. Find them all, then come talk to me in the middle of the plaza for a reward.");
 
             // Show dialogue
             Game1.drawDialogue(newNpc);
@@ -320,21 +319,68 @@ namespace OrbitalEventCreator
             }
 
             // Roses positions
+            // Entryway
             rosesPositions[0] = new Vector2(15, 52);
-            rosesPositions[1] = new Vector2(16, 52);
-            rosesPositions[2] = new Vector2(15, 72);
-            rosesPositions[3] = new Vector2(16, 87);
-            rosesPositions[4] = new Vector2(44, 86);
-            rosesPositions[5] = new Vector2(61, 97);
-            rosesPositions[6] = new Vector2(62, 97);
+            rosesPositions[1] = new Vector2(6, 52);
+            rosesPositions[2] = new Vector2(11, 58);
+            rosesPositions[3] = new Vector2(25, 49);
+            // Community Center
+            rosesPositions[4] = new Vector2(7, 25);
+            rosesPositions[5] = new Vector2(34, 18);
+            rosesPositions[6] = new Vector2(48, 21);
+            rosesPositions[7] = new Vector2(61, 17);
+            rosesPositions[8] = new Vector2(70, 20);
+            rosesPositions[9] = new Vector2(82, 17);
+            // Top right
+            rosesPositions[10] = new Vector2(94, 61);
+            rosesPositions[11] = new Vector2(106, 20);
+            rosesPositions[12] = new Vector2(115, 22);
+            rosesPositions[13] = new Vector2(114, 33);
+            // Bottom right
+            rosesPositions[14] = new Vector2(113, 70);
+            rosesPositions[15] = new Vector2(105, 75);
+            rosesPositions[16] = new Vector2(107, 93);
+            rosesPositions[17] = new Vector2(110, 100);
+            // Bottom
+            rosesPositions[18] = new Vector2(69, 100);
+            rosesPositions[19] = new Vector2(61, 98);
+            rosesPositions[20] = new Vector2(45, 102);
+            rosesPositions[21] = new Vector2(42, 87);
+            rosesPositions[22] = new Vector2(48, 77);
+            // Bottom left
+            rosesPositions[23] = new Vector2(22, 99);
+            rosesPositions[24] = new Vector2(6, 84);
+            rosesPositions[25] = new Vector2(26, 77);
 
-            // Set the vector to check if they have been picked up and spawn them
-            for (int i = 0; i < 7; i++)
+
+            // Set up the color values for summer spangles
+            Color[] colorChoice = new Color[]
+            {
+                new Color(0, 208, 255),
+                new Color(99, 255, 210),
+                new Color(255, 212, 0),
+                new Color(255, 144, 122),
+                new Color(255, 0, 238),
+                new Color(206, 91, 255),
+            };
+
+            // Create randomizer
+            Random randColor = new Random();
+            int[] tints = new int[26];
+            for (int i = 0; i < 26; i++)
+            {
+                tints[i] = randColor.Next(0, 6);
+            }
+
+                // Set the vector to check if they have been picked up and spawn them
+                for (int i = 0; i < 26; i++)
             {
                 rosesFound[i] = false;
 
+                // Get a random color
+                Color tint = colorChoice[tints[i]];
                 // Spawn the roses
-                Game1.getLocationFromName("Town").dropObject(new StardewValley.Objects.ColoredObject(593, 1, new Color(99, 255, 210)), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
+                Game1.getLocationFromName("Town").dropObject(new StardewValley.Objects.ColoredObject(593, 1, tint), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
             }
         }
 
