@@ -324,14 +324,21 @@ namespace OrbitalEventCreator
             {
                 foreach (StardewValley.NPC npc in loc.characters)
                 {
-                    if (npc.getName() == "Wizard")
+                    this.Monitor.Log($"NPC found: {npc.getName()}", LogLevel.Info);
+                    if (npc.getName() == "Wizard" || npc.getName() == "Magnus")
                     {
                         protoNPC = npc;
+                        this.Monitor.Log("Wizard selected.", LogLevel.Info);
                     }
                 }
             }
 
-            newNpc = new StardewValley.NPC(protoNPC.Sprite, npcPosition, "Town", 2, "Wizard", new Dictionary<int, int[]>(), protoNPC.Portrait, false);
+            if (protoNPC == null)
+            {
+                this.Monitor.Log("No NPC with name Wizard or Magnus found.", LogLevel.Error);
+            }
+
+            newNpc = new StardewValley.NPC(protoNPC.Sprite, npcPosition, "Town", 2, protoNPC.getName(), new Dictionary<int, int[]>(), protoNPC.Portrait, false);
             newNpc.setTileLocation(npcPosition);
             newNpc.Speed = protoNPC.Speed;
 
