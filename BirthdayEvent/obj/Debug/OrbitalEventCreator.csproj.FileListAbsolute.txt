@@ -3,4 +3,3 @@ C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-star
 C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\bin\Debug\OrbitalEventCreator.pdb
 C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\OrbitalEventCreator.dll
 C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\OrbitalEventCreator.pdb
-C:\Users\iread\Dropbox\Coding\StardewValleyMods\pjimenezmateo-birthdayevent-stardew-valley\BirthdayEvent\obj\Debug\OrbitalEventCreator.csprojAssemblyReference.cache

@@ -351,6 +351,7 @@ namespace OrbitalEventCreator
                 // Show dialogue
                 Game1.drawDialogue(newNpc);
             }
+            this.Monitor.Log("NPC spawned!", LogLevel.Info);
 
             // Change music, if we are currently on town change directly, else set
             // up a hook to change the music when the player enters town
@@ -417,8 +418,8 @@ namespace OrbitalEventCreator
                 tints[i] = randColor.Next(0, 6);
             }
 
-                // Set the vector to check if they have been picked up and spawn them
-                for (int i = 0; i < 26; i++)
+            // Set the vector to check if they have been picked up and spawn them
+            for (int i = 0; i < 26; i++)
             {
                 rosesFound[i] = false;
 
@@ -427,6 +428,7 @@ namespace OrbitalEventCreator
                 // Spawn the roses
                 Game1.getLocationFromName("Town").dropObject(new StardewValley.Objects.ColoredObject(593, 1, tint), rosesPositions[i] * 64f, Game1.viewport, true, (Farmer)null);
             }
+            this.Monitor.Log("Spawned items!", LogLevel.Info);
         }
 
         private void OnPlayerWarped(object sender, WarpedEventArgs e)
